@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     container_name: web-demo
-    image: daniel0318pisces/web_v2:latest
+    image: daniel0318pisces/my_repo:latest
     build: .
     ports:
       - "8000:8000"
