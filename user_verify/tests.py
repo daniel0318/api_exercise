@@ -7,42 +7,78 @@ from django.core.cache import cache
 
 class UserCreateTests(APITestCase):
 
-    def test_create_user_success(self):
+    def test_register_success(self):
         """
-        Ensure we can create a new user with valid data.
+        Positive: register with valid data
         """
         url = reverse('create_user')
         data = {
-            'username': 'newuser',
-            'password': 'SecurePass123'
+            'username': 'yourusername1',
+            'password': 'Youpassword1',
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response.data['success'])
 
-    def test_create_user_invalid_password(self):
+    def test_register_invalid_username(self):
         """
-        Ensure we cannot create a user with an invalid password.
+        Negative: register with invalid username
         """
         url = reverse('create_user')
-        data = {
-            'username': 'newuser',
-            'password': 'short'
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(response.data['success'])
-        self.assertIn('reason', response.data)
+        data_list = [
+            {
+            'username': 'y1',
+            'password': 'Youpassword1',
+            },
+            {
+            'username': 'yourusername1yourusername1yourusername1',
+            'password': 'Youpassword1',
+            },
+        ]
+        for data in data_list:
+            response = self.client.post(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertFalse(response.data['success'])
+            self.assertIn('reason', response.data)
+
+    def test_register_invalid_password(self):
+        """
+        Negative: register with invalid password
+        """
+        url = reverse('create_user')
+        data_list = [
+            {
+            'username': 'yourusername1',
+            'password': 'Youpa1',
+            },
+            {
+            'username': 'yourusername1',
+            'password': 'Youpassword1Youpassword1Youpassword1',
+            },
+            {
+            'username': 'yourusername1',
+            'password': 'youpassword1',
+            },
+            {
+            'username': 'yourusername1',
+            'password': 'Youpassword',
+            },
+        ]
+        for data in data_list:
+            response = self.client.post(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertFalse(response.data['success'])
+            self.assertIn('reason', response.data)
 
     def test_create_user_duplicate_username(self):
         """
-        Ensure we cannot create a user with a duplicate username.
+        Negative: duplicate username.
         """
-        User.objects.create_user(username='newuser', password='SecurePass123')
+        User.objects.create_user(username='yourusername1', password='Youpassword1')
         url = reverse('create_user')
         data = {
-            'username': 'newuser',
-            'password': 'SecurePass123'
+            'username': 'yourusername1',
+            'password': 'Youpassword1',
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -53,19 +89,19 @@ class UserCreateTests(APITestCase):
 class LoginViewTests(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='SecurePass123')
+        self.user = User.objects.create_user(username='yourusername1', password='Youpassword1')
     
     def tearDown(self):
         cache.clear()
 
     def test_login_success(self):
         """
-        Ensure we can login with valid credentials.
+        Positive: login with valid credentials.
         """
         url = reverse('login')
         data = {
-            'username': 'testuser',
-            'password': 'SecurePass123'
+            'username': 'yourusername1',
+            'password': 'Youpassword1',
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -73,12 +109,12 @@ class LoginViewTests(APITestCase):
 
     def test_login_invalid_credentials(self):
         """
-        Ensure we cannot login with invalid credentials.
+        Negative: login with invalid credentials.
         """
         url = reverse('login')
         data = {
-            'username': 'testuser',
-            'password': 'WrongPassword'
+            'username': 'yourusername1',
+            'password': 'Wrongpassword1',
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -86,12 +122,12 @@ class LoginViewTests(APITestCase):
 
     def test_login_too_many_attempts(self):
         """
-        Ensure the login is blocked after too many failed attempts.
+        the login is blocked after too many failed attempts.
         """
         url = reverse('login')
         data = {
-            'username': 'testuser',
-            'password': 'WrongPassword'
+            'username': 'yourusername1',
+            'password': 'Wrongpassword1',
         }
         for _ in range(5):
             self.client.post(url, data, format='json')
