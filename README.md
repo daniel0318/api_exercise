@@ -28,6 +28,8 @@ Ran 7 tests in 1.881s
 Document page
 http://localhost:8000/swagger/
 
+Docker hub image:
+https://hub.docker.com/layers/daniel0318pisces/my_repo/latest/images/sha256-c06418a32c1618c0e46a639cef014d8cc93d7ce4412d70cbe3fa1b20cc4c7a92?context=repo
 
 ### Main Works
 
