@@ -19,6 +19,8 @@ from drf_yasg import openapi
 from .serializers import UserSerializer
 
 logger = logging.getLogger('myapp')
+INVALID_CREDENTIALS_MESSAGE = "Invalid credentials"
+TOO_MANY_FAILED_MESSAGE = "Too many failed login attempts. Please wait a minute before trying again."
 
 class UserCreate(APIView):
     """
@@ -47,8 +49,24 @@ class UserCreate(APIView):
             required=['username', 'password'],
         ),
         responses={
-            201: "Created",
-            400: "Bad Request",
+            201: openapi.Response(
+                description="Created",
+                examples={
+                    "application/json": {
+                        "success": True,
+                        "reason": "",
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad Request",
+                examples={
+                    "application/json": {
+                        "success": False,
+                        "reason": "Username must be between 3 and 32 characters."
+                    }
+                }
+            ),
         }
     )
     def post(self, request, *args, **kwargs):
@@ -77,9 +95,34 @@ class LoginView(APIView):
             required=['username', 'password'],
         ),
         responses={
-            200: "OK",
-            401: "UNAUTHORIZED",
-            429: "TOO MANY REQUESTS",
+            200: openapi.Response(
+                description="OK",
+                examples={
+                    "application/json": {
+                        "success": True,
+                        "reason": "",
+                        "access": "ACCESS_TOKEN"
+                    }
+                }
+            ),
+            401: openapi.Response(
+                description="UNAUTHORIZED",
+                examples={
+                    "application/json": {
+                        "success": False,
+                        "reason": INVALID_CREDENTIALS_MESSAGE
+                    }
+                }
+            ),
+            429: openapi.Response(
+                description="TOO MANY REQUESTS",
+                examples={
+                    "application/json": {
+                        "success": False,
+                        "reason": TOO_MANY_FAILED_MESSAGE
+                    }
+                }
+            ),
         }
     )
     def post(self, request):
@@ -92,7 +135,7 @@ class LoginView(APIView):
             return Response(
                 {
                     'success': False,
-                    'reason': "Too many failed login attempts. Please wait a minute before trying again.",
+                    'reason': TOO_MANY_FAILED_MESSAGE,
                 }, 
                 status=status.HTTP_429_TOO_MANY_REQUESTS
             )
@@ -118,7 +161,7 @@ class LoginView(APIView):
             return Response(
                 {
                     'success': False,
-                    'reason': 'Invalid credentials',
+                    'reason': INVALID_CREDENTIALS_MESSAGE,
                 }, 
                 status=status.HTTP_401_UNAUTHORIZED
             )
