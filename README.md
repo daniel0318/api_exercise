@@ -4,7 +4,7 @@
 ```
 cd deploy
 docker compose pull
-docker compose run
+docker compose up
 ```
 Then services should be running
 
