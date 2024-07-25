@@ -14,18 +14,15 @@ docker exec -it web-demo python manage.py test
 ```
 expected result:
 ```
-Found 6 test(s).
+Found 7 test(s).
 Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
 WARNING Unauthorized: /user_verify/login/
-......
-.WARNING Bad Request: /user_verify/register/
+...
+WARNING Bad Request: /user_verify/register/
 ..
 ----------------------------------------------------------------------
-Ran 6 tests in 1.882s
-
-OK
-Destroying test database for alias 'default'...
+Ran 7 tests in 1.881s
 ```
 
 Document page
