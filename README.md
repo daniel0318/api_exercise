@@ -36,6 +36,7 @@ https://hub.docker.com/layers/daniel0318pisces/my_repo/latest/images/sha256-c064
 1. Add two API comply with the requirement:
    - Register with username/password
    - Login with username/password
+   - Note Login API will provide `JWT token` when login succeed
 
 2. Framework using:
    - Web: Django
@@ -44,8 +45,9 @@ https://hub.docker.com/layers/daniel0318pisces/my_repo/latest/images/sha256-c064
 
 3. Use DRF built-in `APIView` + `User` Model + `Serializer` to validate the format of input
 
-4. Record retry times using cache server
+4. Handle retry times using `Redis` cache server
 
 5. Handle error messages and status codes, and verify in `test.py`
+   - so you can find valid/invalid request/response examples there
 
-6. Use `drf_yasg` to show document web
+7. Use `drf_yasg` to show document web
